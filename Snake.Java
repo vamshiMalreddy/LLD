@@ -106,43 +106,18 @@ public class Snake {
         body.addLast(tailPosition);
     }
     
-    public void move(Direction direction, int gridHeight, int gridWidth){
+    public Position move(Direction direction, int gridHeight, int gridWidth){
         Position currSnakeHeadPosition = body.getFirst();
 
         int newRow = (currSnakeHeadPosition.getRow() + direction.getDeltaX())%gridHeight;
         int newCol = (currSnakeHeadPosition.getCol() + direction.getDeltaY())%gridWidth;
 
-        Position newSnakeHeadPosition = getNewSnakePosition(snakeHead, direction);
-        
+        Position newSnakeHeadPosition = Position(newRow, newCol);
+
         body.addFirst(newSnakeHeadPosition);
         body.removeLast();
-    }
 
-    public void moveSnake(Direction direction, int gridHeight, int gridWidth){
-
-        Position newSnakeHeadPosition = getNewSnakePosition(snakeHead, direction);
-        snake.move(newSnakeHeadPosition);
-    }
-
-    public Position getNewSnakePosition(Postition currSnakeHeadPosition, Direction direction){
-        int newRow = currSnakeHeadPosition.getRow();
-        int newCol = currSnakeHeadPosition.getCol();
-
-        // we can get this from ENUM.
-        if (direction == LEFT){
-            newRow = (newRow - 1) % gridHeight;
-        }
-        if (direction == RIGHT){
-            newRow = (newRow + 1) % gridHeight;
-        }
-        if (direction == UP){
-            newCol = (newCol + 1) % gridWidth;
-        }
-        if (direction == DOWN){
-            newCol = (newCol + 1) % gridWidth;
-        }
-
-        return new Position(newRow, newCol);
+        return newSnakeHeadPosition;
     }
 
     public boolean checkSelfBite(){
@@ -178,14 +153,15 @@ public class Game{
     }
 
     public void play(){
-
         while(true){
             Direction direction = Controller.getInput();
-            Postition headPosition = moveSnake(direction);
+            Postition headPosition = snake.move(direction, gridHeight, gridWidth );
+            
             if (snake.checkSelfBite()){
                 System.out.println("Game Over");
                 break;
             }
+            
             scoreboard.increaseScore();
             if (food.getPosition().equals(headPosition)){
                 scoreboard.increaseEggsEaten();
@@ -193,34 +169,6 @@ public class Game{
                 createNewEgg();
             }
         }
-    }
-
-    public void moveSnake(Direction direction){
-        Position currSnakeHeadPosition = snake.getHead().getPosition();
-        Position newSnakeHeadPosition = getNewSnakePosition(snakeHead, direction);
-        snake.move(newSnakeHeadPosition);
-    }
-
-    // this could be in snake?
-    public Position getNewSnakePosition(Postition currSnakeHeadPosition, Direction direction){
-        int newRow = currSnakeHeadPosition.getRow();
-        int newCol = currSnakeHeadPosition.getCol();
-
-        // we can get this from ENUM.
-        if (direction == LEFT){
-            newRow = (newRow - 1) % gridHeight;
-        }
-        if (direction == RIGHT){
-            newRow = (newRow + 1) % gridHeight;
-        }
-        if (direction == UP){
-            newCol = (newCol + 1) % gridWidth;
-        }
-        if (direction == DOWN){
-            newCol = (newCol + 1) % gridWidth;
-        }
-
-        return new Position(newRow, newCol);
     }
 
     public void createNewEgg(){
