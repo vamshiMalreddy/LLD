@@ -14,6 +14,9 @@
 // Complete
 // Test
 // Extensions
+    // Snake will not pass through edges
+    // Snake will continously move
+    // 
     // Poison, Obstacle, pass through itself for two times.
 
 
@@ -157,21 +160,34 @@ public class Game{
             Direction direction = Controller.getInput();
             Postition headPosition = snake.move(direction, gridHeight, gridWidth );
             
-            if (snake.checkSelfBite()){
+            if (gameOver()){
                 System.out.println("Game Over");
                 break;
             }
             
-            scoreboard.increaseScore();
-            if (food.getPosition().equals(headPosition)){
-                scoreboard.increaseEggsEaten();
-                snake.increaseLength();
-                createNewEgg();
-            }
+            checkFoodEaten(headPosition);
         }
     }
 
-    public void createNewEgg(){
+    private boolean gameOver(){
+        return snake.checkSelfBite();
+    } 
+
+    private void checkFoodEaten(Position headPosition){
+        if (food.getPosition().equals(headPosition)){
+            scoreboard.increaseEggsEaten();
+            snake.increaseLength();
+            createNewEgg();
+        }
+    }
+
+    private void moveSnake(Direction direction){
+        Position currSnakeHeadPosition = snake.getHead().getPosition();
+        Position newSnakeHeadPosition = getNewSnakePosition(snakeHead, direction);
+        snake.move(newSnakeHeadPosition);
+    }
+
+    private void createNewEgg(){
         foodPosition = Position.getRandomPosition(gridHeight, gridWidth);
     }
 }
